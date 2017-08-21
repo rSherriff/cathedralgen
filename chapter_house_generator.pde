@@ -1,9 +1,9 @@
 
-
+float center_y_offset = 0;
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_chapter_house(PVector origin, int sides, float radius, int door_side)
+void draw_chapter_house(PVector origin, int sides, float radius, int door_side, float door_width, int door_vaults)
 {
   strokeCap(SQUARE);
   strokeWeight(pillar_width);
@@ -24,7 +24,7 @@ void draw_chapter_house(PVector origin, int sides, float radius, int door_side)
       temp_pos = next_pos;
 
   }
-  float center_y_offset = abs( current_line_pos.y - temp_pos.y) / 2;
+  center_y_offset = abs( current_line_pos.y - temp_pos.y) / 2;
   current_line_pos.y += center_y_offset;
   
   PVector original_line_pos = new PVector(current_line_pos.x, current_line_pos.y); 
@@ -44,8 +44,8 @@ void draw_chapter_house(PVector origin, int sides, float radius, int door_side)
   draw_chapter_house_walls(sides, original_line_pos, radius, door_side, entrance_pos );
   
   //Entrance
-  draw_chapter_house_entrance(entrance_pos, radius);
-
+  draw_chapter_house_entrance(entrance_pos, radius, door_width, door_vaults);
+  strokeCap(PROJECT);
 }
 
 //-------------------------------------------------------------------------------
@@ -213,7 +213,6 @@ void draw_chapter_house_vaulting(PVector origin, int sides, PVector original_lin
     {
       if(i % 2 != 0)
       {
-        println(boss_number);
         bosses[count] = find_point_on_circle(origin, center_y_offset / 2, current_angle);
         boss_number++;
         line(bosses[count].x, bosses[count].y, origin.x, origin.y);
@@ -261,10 +260,8 @@ void draw_chapter_house_vaulting(PVector origin, int sides, PVector original_lin
   }
   
     float boss_radius = random(5,10);
-    println(boss_number);
     for(int i = 0; i < boss_number; i++)
     {
-      println(i);
       draw_boss(bosses[i], boss_radius);
     }
     
@@ -288,9 +285,10 @@ void draw_chapter_house_buttress(PVector origin, int sides, PVector original_lin
       PVector buttress_pos = move_towards(new PVector(current_line_pos.x, current_line_pos.y), origin, -buttress_length);  
       PVector buttress_start = new PVector(current_line_pos.x, current_line_pos.y);
       
+      draw_pier(buttress_start, buttress_pier_type, buttress_pier_width);
+      
       if(i != door_side && i != door_side + 1)
-      {              
-        draw_pier(buttress_start, buttress_pier_type, buttress_pier_width);
+      {           
         line(buttress_start.x, buttress_start.y, buttress_pos.x,buttress_pos.y);
 
         strokeWeight(pillar_width / 2);
@@ -302,8 +300,7 @@ void draw_chapter_house_buttress(PVector origin, int sides, PVector original_lin
       current_angle += radians(360 / sides);
     
       current_line_pos = next_pos;
-  }
-  strokeCap(SQUARE);  
+  } 
   
 }
 
@@ -348,19 +345,30 @@ void draw_chapter_house_walls(int sides, PVector original_line_pos, float radius
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_chapter_house_entrance(PVector entrance_pos, float radius)
+void draw_chapter_house_entrance(PVector entrance_pos, float radius, float door_width, int door_vaults)
 {
   strokeWeight(1);    
-  strokeCap(ROUND);
-  
+    
   //Entrance Vault
-  int number_of_vaults = int(random(1,4));
-  float entrance_vault_height = random(70,150);
+  int number_of_vaults = door_vaults;
+  float entrance_vault_height = vault_height + ((radius - center_y_offset ) /number_of_vaults);
+  
+  PVector wall_origin = new PVector(entrance_pos.x - vault_width / 2, entrance_pos.y + ((number_of_vaults * entrance_vault_height) / 2));
+  
+  draw_outisde_wall(wall_origin, 14, number_of_vaults * entrance_vault_height, number_of_vaults - 1, 2, true);
+  
+  wall_origin.x += vault_width;
+  draw_outisde_wall(wall_origin, 14, number_of_vaults * entrance_vault_height, number_of_vaults - 1, 4, true);
   
   entrance_pos.y += entrance_vault_height / 2;
   for(int i = 0; i < number_of_vaults; i++)
   {
-    draw_vault(entrance_pos, radius, entrance_vault_height, 0,0,0);
+    draw_vault(entrance_pos, door_width, entrance_vault_height, 0,0,0);
     entrance_pos.y += entrance_vault_height;
   }
+  
+  fill(bg_colour);
+  rect(wall_origin.x - ( vault_width / 2), wall_origin.y + ((number_of_vaults * entrance_vault_height) / 2), vault_width - 14, 15);
+  line(wall_origin.x - vault_width , wall_origin.y + ((number_of_vaults * entrance_vault_height) / 2), wall_origin.x +( vault_width / 2), wall_origin.y + ((number_of_vaults * entrance_vault_height) / 2));
+  noFill();
 }

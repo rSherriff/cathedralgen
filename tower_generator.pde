@@ -9,7 +9,10 @@ void draw_west_end()
   PVector origin;
   
   if(number_of_aisles == 1)
+  {
+    draw_one_vault_end(new PVector(nave_origin.x - (west_end_vault_width / 2) - (vault_width / 2), halfway_y));
     return;
+  }
   
   if(west_end_chance < type_percentage)
   {
@@ -71,6 +74,14 @@ void draw_towered_west_end(PVector origin)
     south_tower_origin.y += west_end_vault_height * 1.5;
   }  
   draw_tower(south_tower_origin, west_end_vault_width, west_end_vault_height, false);
+}
+
+//-------------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------------
+void draw_one_vault_end(PVector origin)
+{
+   draw_tower(origin, vault_height * 2, vault_height * 2, true);
 }
 
 //-------------------------------------------------------------------------------

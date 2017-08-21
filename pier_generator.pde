@@ -14,12 +14,12 @@ void draw_pier(PVector origin, int pier_type, int pier_width)
   if (pier_type == circle_pier)
   {
     fill(0);
-    ellipse(origin.x, origin.y, pier_width, pier_width);
+    ellipse(origin.x, origin.y, buttress_size, buttress_size);
     noFill();
   } else if (pier_type == diamond_pier)
   {
     fill(0);
-    ellipse(origin.x, origin.y, pier_width, pier_width);
+    ellipse(origin.x, origin.y, buttress_size, buttress_size);
     noFill();
   } else if (pier_type == outer_buttress)
   {
@@ -114,33 +114,46 @@ void draw_outside_buttress(PVector origin, float pier_width, int flat_side)
   PVector buttress_end = new PVector(0, 0);
   PVector buttress_projection = new PVector(0, 0);    
 
+  if(outside_buttress_type == 1 || outside_buttress_type ==2)
+  {
+    strokeWeight(8);
+  }
+  else
+  {
+    strokeWeight(15);
+  }
+
   if ((flat_side & 1) != 0)
   {    
     buttress_end = find_point_on_circle(origin, buttress_length, PI + HALF_PI);
     buttress_projection = move_towards(new PVector(buttress_end.x, buttress_end.y), origin, -(buttress_length));
+    draw_pier(new PVector(origin.x, origin.y + 5), outside_buttress_type, 3);
   }
   if ((flat_side & 2) != 0)
   {
     buttress_end = find_point_on_circle(origin, buttress_length, PI);
     buttress_projection = find_point_on_circle(origin, buttress_length + (buttress_length / 2), PI);
+    draw_pier(new PVector(origin.x + 5, origin.y), outside_buttress_type, 3);
   }
   if ((flat_side & 4) != 0)
   {
     buttress_end = find_point_on_circle(origin, buttress_length, 0);
     buttress_projection = find_point_on_circle(origin, buttress_length + (buttress_length / 2), 0);
+    draw_pier(new PVector(origin.x - 5, origin.y ), outside_buttress_type, 3);
   }
   if ((flat_side & 8)!= 0)
   {
     buttress_end = find_point_on_circle(origin, buttress_length, HALF_PI);
     buttress_projection = find_point_on_circle(origin, buttress_length + (buttress_length), HALF_PI);
+    draw_pier(new PVector(origin.x, origin.y - 5), outside_buttress_type, 3);
   }
 
+ strokeWeight(buttress_size);
   line(origin.x, origin.y, buttress_end.x, buttress_end.y);
 
   strokeWeight(buttress_size / 2);
   line(buttress_end.x, buttress_end.y, buttress_projection.x, buttress_projection.y);
 
-  strokeCap(ROUND);
   strokeWeight(1);
 }
 
@@ -391,7 +404,7 @@ void draw_west_end_corner_pier(PVector top_pier, PVector bottom_pier)
     int num_images = 2;      
     int image_number = int(random(1, num_images+1));
 
-    float dimensions = random(100,150);
+    float dimensions = random(100, 150);
 
     for (int j = 0; j <= 1; j++)
     {    

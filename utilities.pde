@@ -39,6 +39,11 @@ void draw_ellipse(PVector origin)
       noFill();
 }
 
+void draw_ellipse(float x, float y)
+{
+  draw_ellipse(new PVector(x,y));
+}
+
 void draw_ellipse(PVector origin, int stroke_weight)
 {
   strokeWeight(1);

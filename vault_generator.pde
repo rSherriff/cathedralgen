@@ -30,7 +30,7 @@ void draw_nave(PVector origin, float n_width, float v_height, float num_vaults, 
   }
   else
   {
-     draw_vault_arcade(new PVector(current_nave_x, current_nave_y), n_width, v_height * 2, num_vaults, false);
+     draw_outer_aisle(new PVector(current_nave_x, current_nave_y), n_width, v_height * 2, num_vaults, 0, 9, false);
   }
 
 }
@@ -175,17 +175,18 @@ void draw_crossing_arcade(PVector origin, float arcade_width, float arcade_heigh
 //-------------------------------------------------------------------------------
 void draw_outer_aisle(PVector origin, float arcade_width, float arcade_height, float number_of_vaults, int pier_sides, int wall_sides, boolean vertical)
 {
+
   float vault_width;
   float vault_height;  
   int pier_type = outer_buttress;
   
   int vault_wall_sides = 0;
   //Side Chapels!
-  if(random(100) < 50)
+  if(nave_side_chapels)
   {
     if(!vertical)
     {
-      //vault_wall_sides = 6;   
+      vault_wall_sides = 6;   
     }
   }
   
@@ -235,23 +236,27 @@ void draw_outer_aisle(PVector origin, float arcade_width, float arcade_height, f
       draw_walled_vault(origin, vault_width, vault_height, 6, pillar_width, pier_type, vault_wall_sides);
     }
   }
-  
+  else if(pier_sides == 0)
+  {
+    draw_walled_vault(origin, vault_width, vault_height, 0, pillar_width, pier_type, vault_wall_sides);
+  }
+ //<>//
   fill(0);  
   if ((wall_sides & 1) != 0)
   {    
-    draw_outisde_wall(new PVector(origin.x - (arcade_width / 2) + (vault_width / 2), origin.y - (vault_height / 2)), arcade_width, pillar_width, number_of_vaults, wall_sides, false);
+    draw_outisde_wall(new PVector(origin.x - (arcade_width / 2) + (vault_width / 2), origin.y - (vault_height / 2)), arcade_width, pillar_width, number_of_vaults, 1, false);
   }
   if ((wall_sides & 2) != 0)
   {
-    draw_outisde_wall(new PVector(origin.x - (vault_width / 2), origin.y - (arcade_height / 2) + (vault_height / 2)), pillar_width, vault_height,number_of_vaults,wall_sides,true);
+    draw_outisde_wall(new PVector(origin.x - (vault_width / 2), origin.y - (arcade_height / 2) + (vault_height / 2)), pillar_width, vault_height,number_of_vaults,2,true);
   }
   if ((wall_sides & 4) != 0)
   {
-    draw_outisde_wall(new PVector(origin.x + (vault_width / 2), origin.y - (arcade_height / 2) + (vault_height / 2)), pillar_width, vault_height, number_of_vaults,wall_sides,true);
+    draw_outisde_wall(new PVector(origin.x + (vault_width / 2), origin.y - (arcade_height / 2) + (vault_height / 2)), pillar_width, vault_height, number_of_vaults,4,true);
   }
   if ((wall_sides & 8)!= 0)
   {
-    draw_outisde_wall(new PVector(origin.x - (arcade_width / 2) + (vault_width / 2), origin.y + (vault_height / 2)), arcade_width, pillar_width, number_of_vaults,wall_sides,false);
+    draw_outisde_wall(new PVector(origin.x - (arcade_width / 2) + (vault_width / 2), origin.y + (vault_height / 2)), arcade_width, pillar_width, number_of_vaults,8,false);
   }
   noFill();
 }
@@ -301,7 +306,6 @@ void draw_cloister(PVector origin, int start_pos, float cloister_width, float cl
   PVector current_vector = new PVector(origin.x, origin.y);
   for(int i = 0; i < 4; i++)
   {
-    println(start_pos);
     if(current_pos == 1)
     {
       if(start_pos != 1)

@@ -363,7 +363,7 @@ void draw_chapter_house_entrance(PVector entrance_pos, float radius, float door_
   entrance_pos.y += entrance_vault_height / 2;
   for(int i = 0; i < number_of_vaults; i++)
   {
-    draw_vault(entrance_pos, door_width, entrance_vault_height, 0,0,0);
+    draw_vault(entrance_pos, door_width, entrance_vault_height, 0,0,0,3);
     entrance_pos.y += entrance_vault_height;
   }
   

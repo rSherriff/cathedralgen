@@ -103,6 +103,8 @@ boolean nave_side_chapels;
 
 int outside_buttress_type = 0;
 
+int nave_ribbing_type = -1;
+
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
@@ -211,6 +213,8 @@ void setup_cathedral()
   }
 
   outside_buttress_type = int(random(1, 4));
+  
+  nave_ribbing_type = int(random(1, 4));
 }
 
 void draw() 
@@ -264,7 +268,7 @@ void draw_cathedral()
   draw_west_end();
 
   //Nave
-  draw_nave(nave_origin, nave_width, vault_height, number_of_vaults, number_of_aisles, mid_aisle);
+  draw_nave(nave_origin, nave_width, vault_height, number_of_vaults, number_of_aisles, mid_aisle, nave_ribbing_type, ribbing_normal);
 
   for (int i = 1; i <= transept_number; i++)
   {
@@ -297,7 +301,7 @@ void draw_cathedral()
     boolean final_transpet = i == transept_number; 
 
     //Crossing
-    draw_crossing(crossing_origin, final_transpet);
+    draw_crossing(crossing_origin, final_transpet, nave_ribbing_type, ribbing_normal);
 
     //North Transept  
     draw_north_transept(north_transept_origin, final_transpet);
@@ -308,7 +312,7 @@ void draw_cathedral()
     if (i == transept_number)
     {            
       //Choir
-      draw_nave(choir_origin, choir_width, vault_height, number_of_choir_vaults, number_of_choir_aisles, mid_choir_aisle );
+      draw_nave(choir_origin, choir_width, vault_height, number_of_choir_vaults, number_of_choir_aisles, mid_choir_aisle, nave_ribbing_type, ribbing_normal );
       apse_origin.x = choir_origin.x + ( (number_of_choir_vaults - 0.5) * vault_width);
       break;
     } else
@@ -316,7 +320,7 @@ void draw_cathedral()
       //Another nave
       int this_nave_vaults = int(random(2, 5));
       float this_nave_width = vault_width * this_nave_vaults;
-      draw_nave(extra_nave_origin, this_nave_width, vault_height, this_nave_vaults, number_of_aisles, mid_aisle );
+      draw_nave(extra_nave_origin, this_nave_width, vault_height, this_nave_vaults, number_of_aisles, mid_aisle, nave_ribbing_type, ribbing_normal );
 
       north_transept_origin.x += (vaults_wide_transpet * vault_width)+ this_nave_width +  vault_width;
       south_transept_origin.x += (vaults_wide_transpet * vault_width)+ this_nave_width + vault_width;
@@ -351,7 +355,7 @@ void draw_cathedral()
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_crossing(PVector crossing_origin, boolean final_transept)
+void draw_crossing(PVector crossing_origin, boolean final_transept, int m_ribbing_type, int aisle_ribbing_type)
 {
   PVector current_crossing_point = new PVector (crossing_origin.x, crossing_origin.y);  
 
@@ -383,11 +387,11 @@ void draw_crossing(PVector crossing_origin, boolean final_transept)
       if (i == mid_transept_aisle)
       {
         boolean mid_vault = j == mid_transept_aisle;
-        draw_crossing_arcade(current_crossing_point, transept_vault_width, vault_height * 2, 1, false, mid_vault );
+        draw_crossing_arcade(current_crossing_point, transept_vault_width, vault_height * 2, 1, false, mid_vault, m_ribbing_type, aisle_ribbing_type );
         current_crossing_point.y += vault_height * 1.5;
       } else
       {        
-        draw_vault_arcade(current_crossing_point, transept_vault_width, vault_height, 1, false);        
+        draw_vault_arcade(current_crossing_point, transept_vault_width, vault_height, 1, false, aisle_ribbing_type);        
 
         if (j == 0)
         {

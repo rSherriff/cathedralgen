@@ -171,7 +171,7 @@ void draw_rectangular_apse(PVector origin)
     origin.y -= (vault_height * ((number_of_apse_aisles) / 2)) +(vault_height / 2);
   }
 
-  draw_nave(origin, apse_width, vault_height, number_apse_vaults, number_of_apse_aisles, mid_apse_aisle); 
+  draw_nave(origin, apse_width, vault_height, number_apse_vaults, number_of_apse_aisles, mid_apse_aisle, nave_ribbing_type, ribbing_normal); 
 }
 
 //-------------------------------------------------------------------------------

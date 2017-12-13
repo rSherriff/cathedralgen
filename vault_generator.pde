@@ -2,35 +2,35 @@
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_nave(PVector origin, float n_width, float v_height, float num_vaults, int num_aisles, int m_aisle)
+void draw_nave(PVector origin, float n_width, float v_height, float num_vaults, int num_aisles, int m_aisle, int m_ribbing_type, int aisle_ribbing_type)
 {    
   float current_nave_x = origin.x;
   float current_nave_y = origin.y;
   
   if(num_aisles > 1)
   {
-    draw_outer_aisle(new PVector(current_nave_x, current_nave_y), n_width, v_height, num_vaults, 1, 1, false);
+    draw_outer_aisle(new PVector(current_nave_x, current_nave_y), n_width, v_height, num_vaults, 1, 1, false, ribbing_normal);
     for (int i = 0; i < num_aisles - 2; i++)
     {
       if(i == m_aisle)
       {
         current_nave_y += v_height * 1.5;
-        draw_vault_arcade(new PVector(current_nave_x, current_nave_y), n_width, v_height * 2, num_vaults, false);
+        draw_vault_arcade(new PVector(current_nave_x, current_nave_y), n_width, v_height * 2, num_vaults, false, m_ribbing_type);
   
         current_nave_y += v_height / 2;
       }
       else
       {
         current_nave_y += v_height;
-        draw_vault_arcade(new PVector(current_nave_x, current_nave_y), n_width, v_height, num_vaults, false);
+        draw_vault_arcade(new PVector(current_nave_x, current_nave_y), n_width, v_height, num_vaults, false,aisle_ribbing_type);
       }
     }
     current_nave_y += v_height;
-    draw_outer_aisle(new PVector(current_nave_x, current_nave_y), n_width, v_height, num_vaults, 8, 8, false);
+    draw_outer_aisle(new PVector(current_nave_x, current_nave_y), n_width, v_height, num_vaults, 8, 8, false, ribbing_normal);
   }
   else
   {
-     draw_outer_aisle(new PVector(current_nave_x, current_nave_y), n_width, v_height * 2, num_vaults, 0, 9, false);
+     draw_outer_aisle(new PVector(current_nave_x, current_nave_y), n_width, v_height * 2, num_vaults, 0, 9, false, m_ribbing_type);
   }
 
 }
@@ -38,12 +38,12 @@ void draw_nave(PVector origin, float n_width, float v_height, float num_vaults, 
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_vault(PVector origin, float vault_width, float vault_height, int pier_placement, int pier_width, int pier_type)
+void draw_vault(PVector origin, float vault_width, float vault_height, int pier_placement, int pier_width, int pier_type, int ribbing_type)
 {
   float half_vault_width = vault_width / 2;
   float half_vault_height = vault_height / 2;
   float boss_radius = vault_width * 0.05;
-
+  
   //Ellipse at center for the boss
   ellipse(origin.x, origin.y, boss_radius, boss_radius);
 
@@ -51,16 +51,8 @@ void draw_vault(PVector origin, float vault_width, float vault_height, int pier_
   rect(origin.x, origin.y, vault_width, vault_height);
   rect(origin.x, origin.y, vault_width - (inner_rectangle_inset_width * 2), vault_height - (inner_rectangle_inset_height * 2));
 
-  //Lines for vaulting
-  PVector ne_line_terminus = find_point_on_circle(origin, boss_radius / 2, PI + QUARTER_PI);
-  PVector nw_line_terminus = find_point_on_circle(origin, boss_radius / 2, PI + HALF_PI + QUARTER_PI);
-  PVector se_line_terminus = find_point_on_circle(origin, boss_radius / 2, QUARTER_PI);
-  PVector sw_line_terminus = find_point_on_circle(origin, boss_radius / 2, HALF_PI + QUARTER_PI);
-  line(origin.x - half_vault_width, origin.y - half_vault_height, ne_line_terminus.x, ne_line_terminus.y);
-  line(origin.x + half_vault_width, origin.y - half_vault_height, nw_line_terminus.x, nw_line_terminus.y);
-  line(origin.x + half_vault_width, origin.y + half_vault_height, se_line_terminus.x, se_line_terminus.y);
-  line(origin.x - half_vault_width, origin.y + half_vault_height, sw_line_terminus.x, sw_line_terminus.y);
-
+  draw_ribbing(ribbing_type, origin, vault_width, vault_height);
+  
   //Piers
   //Pier placement is a bitmask. starts topleft and goes clockwise
   if ((pier_placement & 1) != 0)
@@ -84,7 +76,7 @@ void draw_vault(PVector origin, float vault_width, float vault_height, int pier_
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_vault_arcade(PVector origin, float arcade_width, float arcade_height, float number_of_vaults, boolean vertical)
+void draw_vault_arcade(PVector origin, float arcade_width, float arcade_height, float number_of_vaults, boolean vertical, int ribbing_type)
 {
   float temp_vault_height;
   float temp_vault_width;
@@ -107,7 +99,7 @@ void draw_vault_arcade(PVector origin, float arcade_width, float arcade_height, 
 
   for (int i = 0; i < number_of_vaults - 1; i++)
   {
-    draw_vault(origin, temp_vault_width, temp_vault_height, running_columns, pillar_width, pier_type);
+    draw_vault(origin, temp_vault_width, temp_vault_height, running_columns, pillar_width, pier_type, ribbing_type);
     if(vertical)
     {
       origin.y += temp_vault_height;
@@ -118,13 +110,13 @@ void draw_vault_arcade(PVector origin, float arcade_width, float arcade_height, 
     }
   }
 
-  draw_vault(origin, temp_vault_width, temp_vault_height, terminating_columns, pillar_width, pier_type);
+  draw_vault(origin, temp_vault_width, temp_vault_height, terminating_columns, pillar_width, pier_type, ribbing_type);
 }
 
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_crossing_arcade(PVector origin, float arcade_width, float arcade_height, float number_of_vaults, boolean vertical, boolean mid_vault)
+void draw_crossing_arcade(PVector origin, float arcade_width, float arcade_height, float number_of_vaults, boolean vertical, boolean mid_vault, int m_ribbing_type, int aisle_ribbing_type)
 {
   float temp_vault_height;
   float temp_vault_width;
@@ -138,42 +130,40 @@ void draw_crossing_arcade(PVector origin, float arcade_width, float arcade_heigh
     pier_type = circle_pier;
   }
   
-  int running_columns;
   int terminating_columns = 15;
   
   if(vertical)
   {
     temp_vault_height = arcade_height / number_of_vaults;
     temp_vault_width = arcade_width;
-    running_columns = 3;
   }
   else
   {      
     temp_vault_width = arcade_width / number_of_vaults;
     temp_vault_height = arcade_height;
-    running_columns = 9;
   }
 
-  for (int i = 0; i < number_of_vaults - 1; i++)
+  if(!mid_vault)
   {
-    draw_vault(origin, temp_vault_width, temp_vault_height, running_columns, pillar_width, pier_type);
-    if(vertical)
+    draw_vault(origin, temp_vault_width, temp_vault_height, terminating_columns, pillar_width, pier_type, m_ribbing_type);
+  }
+  else
+  {
+    if(temp_vault_width - temp_vault_height < 20 && temp_vault_width - temp_vault_height > -20)
     {
-      origin.y += vault_height;
+     draw_vault(origin, temp_vault_width, temp_vault_height, terminating_columns, pillar_width, pier_type, 4);
     }
     else
-    {      
-      origin.x += vault_width;
+    {
+      draw_vault(origin, temp_vault_width, temp_vault_height, terminating_columns, pillar_width, pier_type, m_ribbing_type);
     }
-  }
-
-  draw_vault(origin, temp_vault_width, temp_vault_height, terminating_columns, pillar_width, pier_type);
+  }  
 }
 
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_outer_aisle(PVector origin, float arcade_width, float arcade_height, float number_of_vaults, int pier_sides, int wall_sides, boolean vertical)
+void draw_outer_aisle(PVector origin, float arcade_width, float arcade_height, float number_of_vaults, int pier_sides, int wall_sides, boolean vertical, int ribbing_type)
 {
 
   float vault_width;
@@ -203,7 +193,7 @@ void draw_outer_aisle(PVector origin, float arcade_width, float arcade_height, f
   
   for (int i = 0; i < number_of_vaults - 1; i++)
   {
-    draw_walled_vault(origin, vault_width, vault_height, pier_sides, pillar_width, pier_type, vault_wall_sides);
+    draw_walled_vault(origin, vault_width, vault_height, pier_sides, pillar_width, pier_type, vault_wall_sides, ribbing_type);
     if(vertical)
     {
       origin.y += vault_height;
@@ -218,27 +208,27 @@ void draw_outer_aisle(PVector origin, float arcade_width, float arcade_height, f
   {
     if(vertical)
     {
-      draw_walled_vault(origin, vault_width, vault_height, 9, pillar_width, pier_type, vault_wall_sides);
+      draw_walled_vault(origin, vault_width, vault_height, 9, pillar_width, pier_type, vault_wall_sides, ribbing_type);
     }
     else
     {
-      draw_walled_vault(origin, vault_width, vault_height, 3, pillar_width, pier_type, vault_wall_sides);
+      draw_walled_vault(origin, vault_width, vault_height, 3, pillar_width, pier_type, vault_wall_sides, ribbing_type);
     }
   } 
   else if (pier_sides == 8)
   {
-    draw_walled_vault(origin, vault_width, vault_height, 12, pillar_width, pier_type, vault_wall_sides);
+    draw_walled_vault(origin, vault_width, vault_height, 12, pillar_width, pier_type, vault_wall_sides, ribbing_type);
   }
   else if (pier_sides == 2)
   {
     if(vertical)
     {
-      draw_walled_vault(origin, vault_width, vault_height, 6, pillar_width, pier_type, vault_wall_sides);
+      draw_walled_vault(origin, vault_width, vault_height, 6, pillar_width, pier_type, vault_wall_sides, ribbing_type);
     }
   }
   else if(pier_sides == 0)
   {
-    draw_walled_vault(origin, vault_width, vault_height, 0, pillar_width, pier_type, vault_wall_sides);
+    draw_walled_vault(origin, vault_width, vault_height, 0, pillar_width, pier_type, vault_wall_sides, ribbing_type);
   }
  //<>//
   fill(0);  
@@ -264,12 +254,16 @@ void draw_outer_aisle(PVector origin, float arcade_width, float arcade_height, f
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_walled_vault(PVector origin, float vault_width, float vault_height, int pier_placement, int pier_width, int pier_type, int wall_sides)
+void draw_walled_vault(PVector origin, float vault_width, float vault_height, int pier_placement, int pier_width, int pier_type, int wall_sides, int ribbing_type)
 {
-  float half_vault_width = vault_width / 2;
-  float half_vault_height = vault_height / 2;
-
-  draw_vault(origin, vault_width, vault_height, pier_placement, pier_width, pier_type);
+  if(wall_sides == 0)
+  {
+    draw_vault(origin, vault_width, vault_height, pier_placement, pier_width, pier_type, ribbing_type);
+  }
+  else
+  {
+    draw_vault(origin, vault_width, vault_height, pier_placement, pier_width, pier_type, ribbing_type);
+  }
   
   fill(0);
   if ((wall_sides & 1) != 0)
@@ -296,12 +290,7 @@ void draw_walled_vault(PVector origin, float vault_width, float vault_height, in
 //
 //-------------------------------------------------------------------------------
 void draw_cloister(PVector origin, int start_pos, float cloister_width, float cloister_height, float number_of_vaults_wide, float number_of_vaults_high )
-{
-  int top_left = 1;
-  int top_right = 2;
-  int bottom_right = 3;
-  int bottom_left = 4;
-  
+{  
   int current_pos = start_pos;
   PVector current_vector = new PVector(origin.x, origin.y);
   for(int i = 0; i < 4; i++)
@@ -381,7 +370,7 @@ void draw_cloister_aisle(PVector origin, float arcade_width, float arcade_height
   
   for (int i = 0; i < number_of_vaults - 1; i++)
   {
-    draw_walled_vault(origin, vault_width, vault_height, pier_sides, pillar_width, pier_type, vault_wall_sides);
+    draw_walled_vault(origin, vault_width, vault_height, pier_sides, pillar_width, pier_type, vault_wall_sides, ribbing_normal);
     if(vertical)
     {
       origin.y += vault_height;
@@ -396,22 +385,22 @@ void draw_cloister_aisle(PVector origin, float arcade_width, float arcade_height
   {
     if(vertical)
     {
-      draw_walled_vault(origin, vault_width, vault_height, 16, pillar_width, pier_type, vault_wall_sides);
+      draw_walled_vault(origin, vault_width, vault_height, 16, pillar_width, pier_type, vault_wall_sides, ribbing_normal);
     }
     else
     {
-      draw_walled_vault(origin, vault_width, vault_height, 16, pillar_width, pier_type, vault_wall_sides);
+      draw_walled_vault(origin, vault_width, vault_height, 16, pillar_width, pier_type, vault_wall_sides, ribbing_normal);
     }
   } 
   else if (pier_sides == 8)
   {
-    draw_walled_vault(origin, vault_width, vault_height, 16, pillar_width, pier_type, vault_wall_sides);
+    draw_walled_vault(origin, vault_width, vault_height, 16, pillar_width, pier_type, vault_wall_sides, ribbing_normal);
   }
   else if (pier_sides == 2)
   {
     if(vertical)
     {
-      draw_walled_vault(origin, vault_width, vault_height, 16, pillar_width, pier_type, vault_wall_sides);
+      draw_walled_vault(origin, vault_width, vault_height, 16, pillar_width, pier_type, vault_wall_sides, ribbing_normal);
     }
   }
   

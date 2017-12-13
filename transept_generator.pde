@@ -10,22 +10,7 @@ void draw_north_transept(PVector origin, Boolean final_transept)
   draw_north_transept_end(origin);
   
   y_origin += vault_height;
-  
-  
-  int meet_nave_row = number_transpet_vault - ((number_of_aisles - 1) / 2);
-  int meet_choir_row = number_transpet_vault - ((number_of_choir_aisles - 1) / 2);    
-  
-  if(vaults_wide_transpet == 1)
-  {
-    meet_nave_row--;
-    meet_choir_row--;
-  }
-  
-  if(!final_transept)
-  {
-    meet_choir_row = meet_nave_row;
-  }
-  
+      
   for(int j = 0; j < number_transpet_vault - 1; j++)
   {
     for(int i = 0; i < vaults_wide_transpet; i++)
@@ -67,7 +52,7 @@ void draw_north_transept(PVector origin, Boolean final_transept)
         pier_side = 0;
       }
       
-      draw_outer_aisle(new PVector(x_origin,y_origin), transept_vault_width, vault_height,1, pier_side, wall_sides, true);
+      draw_outer_aisle(new PVector(x_origin,y_origin), transept_vault_width, vault_height,1, pier_side, wall_sides, true, 0);
               
       if( (i + 1) == mid_transept_aisle)
       {
@@ -167,7 +152,7 @@ void draw_south_transept(PVector origin, Boolean final_transept)
         pier_side = 0;
       }
 
-      draw_outer_aisle(new PVector(x_origin,y_origin), transept_vault_width, vault_height, 1, pier_side, wall_sides, true);
+      draw_outer_aisle(new PVector(x_origin,y_origin), transept_vault_width, vault_height, 1, pier_side, wall_sides, true, 0);
                
       if( (i + 1) == mid_transept_aisle)
       {
@@ -228,7 +213,7 @@ void draw_north_transept_end(PVector origin)
         wall_sides += 4;
       }      
       
-      draw_vault(new PVector(x_origin,y_origin), transept_vault_width, vault_height, 0, 0, 1);
+      draw_vault(new PVector(x_origin,y_origin), transept_vault_width, vault_height, 0, 0, 1,0);
               
       if( (i + 1) == mid_transept_aisle)
       {
@@ -286,7 +271,7 @@ void draw_south_transept_end(PVector origin)
         wall_sides += 4;
       }      
       
-      draw_vault(new PVector(x_origin,y_origin), transept_vault_width, vault_height, 0, 0, 1);
+      draw_vault(new PVector(x_origin,y_origin), transept_vault_width, vault_height, 0, 0, 1,0);
       
       if( (i + 1) == mid_transept_aisle)
       {

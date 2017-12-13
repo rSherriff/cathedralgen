@@ -42,7 +42,7 @@ void draw_west_end()
       origin = new PVector(nave_origin.x - (west_end_vault_width / 2) - (vault_width / 2), halfway_y - ((west_end_aisles * vault_height) /2) + (vault_height / 2));
     }
     
-    draw_curtained_west_end(origin);
+    draw_curtained_west_end(origin, ribbing_normal);
   }
 }
 
@@ -62,7 +62,7 @@ void draw_towered_west_end(PVector origin)
   }  
   draw_tower(north_tower_origin, west_end_vault_width, west_end_vault_height + (west_end_stick_out ), true);
 
-  draw_nave(origin, west_end_vault_width, west_end_vault_height, 1, west_end_aisles, array_aisle_list[west_end_aisles] );  
+  draw_nave(origin, west_end_vault_width, west_end_vault_height, 1, west_end_aisles, array_aisle_list[west_end_aisles], nave_ribbing_type, ribbing_normal );  
 
   PVector south_tower_origin = new PVector(origin.x, origin.y);
   if (west_end_aisles > 1)
@@ -87,22 +87,22 @@ void draw_one_vault_end(PVector origin)
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_curtained_west_end(PVector origin)
+void draw_curtained_west_end(PVector origin, int ribbing_type)
 {
   if(west_end_aisles == 3)
   {
-    draw_nave_matching_west_end(origin);
+    draw_nave_matching_west_end(origin, ribbing_type);
   }
   else
   {
-    draw_nave_non_matching_west_end(origin);
+    draw_nave_non_matching_west_end(origin, ribbing_type);
   }
 }
 
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_nave_matching_west_end(PVector origin)
+void draw_nave_matching_west_end(PVector origin, int ribbing_type)
 {
   float current_nave_x = origin.x;
   float current_nave_y = origin.y;
@@ -112,14 +112,14 @@ void draw_nave_matching_west_end(PVector origin)
     
   if(west_end_aisles > 1)
   {
-    draw_outer_aisle(new PVector(current_nave_x, current_nave_y - west_end_stick_out), west_end_vault_width, west_end_vault_height + (west_end_stick_out * 2), 1, 1, 1, false);
+    draw_outer_aisle(new PVector(current_nave_x, current_nave_y - west_end_stick_out), west_end_vault_width, west_end_vault_height + (west_end_stick_out * 2), 1, 1, 1, false, ribbing_type);
     pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y - ((west_end_vault_height + (west_end_stick_out * 2)) / 2) - west_end_stick_out));
     for (int i = 0; i < 1; i++)
     {
       if(i == m_aisle)
       {
         current_nave_y += west_end_vault_height * 1.5;
-        draw_vault_arcade(new PVector(current_nave_x, current_nave_y), west_end_vault_width, west_end_vault_height * 2, 1, false);
+        draw_vault_arcade(new PVector(current_nave_x, current_nave_y), west_end_vault_width, west_end_vault_height * 2, 1, false, 0);
   
         pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y + west_end_vault_height));
         pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y - west_end_vault_height));
@@ -129,7 +129,7 @@ void draw_nave_matching_west_end(PVector origin)
       else
       {
         current_nave_y += west_end_vault_height;
-        draw_vault_arcade(new PVector(current_nave_x, current_nave_y), west_end_vault_width, west_end_vault_height, 1, false);
+        draw_vault_arcade(new PVector(current_nave_x, current_nave_y), west_end_vault_width, west_end_vault_height, 1, false, 0);
         
         if(i > m_aisle)
         {
@@ -142,12 +142,12 @@ void draw_nave_matching_west_end(PVector origin)
       }
     }
     current_nave_y += west_end_vault_height;
-    draw_outer_aisle(new PVector(current_nave_x, current_nave_y + west_end_stick_out), west_end_vault_width, west_end_vault_height + (west_end_stick_out * 2), 1, 8, 8, false);
+    draw_outer_aisle(new PVector(current_nave_x, current_nave_y + west_end_stick_out), west_end_vault_width, west_end_vault_height + (west_end_stick_out * 2), 1, 8, 8, false, ribbing_type);
     pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y + ((west_end_vault_height + (west_end_stick_out * 2)) / 2) + west_end_stick_out));
   }
   else
   {
-     draw_vault_arcade(new PVector(current_nave_x, current_nave_y), west_end_vault_width, west_end_vault_height * 2, 1, false);
+     draw_vault_arcade(new PVector(current_nave_x, current_nave_y), west_end_vault_width, west_end_vault_height * 2, 1, false, 0);
      pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y + (west_end_vault_height / 2)));
      pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y - (west_end_vault_height / 2)));
   }
@@ -158,7 +158,7 @@ void draw_nave_matching_west_end(PVector origin)
 //-------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------
-void draw_nave_non_matching_west_end(PVector origin)
+void draw_nave_non_matching_west_end(PVector origin, int ribbing_type)
 {
   west_end_stick_out =0;
   
@@ -168,11 +168,11 @@ void draw_nave_non_matching_west_end(PVector origin)
   
   ArrayList<PVector> pier_points = new ArrayList<PVector>();
   
-  draw_outer_aisle(new PVector(current_nave_x, current_nave_y + (west_end_vault_height * 0.5)), west_end_vault_width, west_end_vault_height * 2, 1, 1, 1, false);
+  draw_outer_aisle(new PVector(current_nave_x, current_nave_y + (west_end_vault_height * 0.5)), west_end_vault_width, west_end_vault_height * 2, 1, 1, 1, false, ribbing_type);
   pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y - ((west_end_vault_height + (west_end_stick_out * 2)) / 2) - west_end_stick_out));
  
   current_nave_y += west_end_vault_height  * 2.5;
-  draw_vault_arcade(new PVector(current_nave_x, current_nave_y), west_end_vault_width, west_end_vault_height * 2, 1, false);
+  draw_vault_arcade(new PVector(current_nave_x, current_nave_y), west_end_vault_width, west_end_vault_height * 2, 1, false, 0);
 
   pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y + west_end_vault_height));
   pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y - west_end_vault_height));
@@ -180,7 +180,7 @@ void draw_nave_non_matching_west_end(PVector origin)
   current_nave_y += west_end_vault_height;
    
   current_nave_y += west_end_vault_height;
-  draw_outer_aisle(new PVector(current_nave_x, current_nave_y + west_end_stick_out), west_end_vault_width, west_end_vault_height * 2, 1, 8, 8, false);
+  draw_outer_aisle(new PVector(current_nave_x, current_nave_y + west_end_stick_out), west_end_vault_width, west_end_vault_height * 2, 1, 8, 8, false, ribbing_type);
   pier_points.add(new PVector(current_nave_x - (west_end_vault_width / 2), current_nave_y + (west_end_vault_height / 2)));
   
   draw_west_end_piers(pier_points);
